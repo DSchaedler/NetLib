@@ -10,8 +10,8 @@ def tick(args)
   $server ||= NLServer.new(port: $port)
   $client ||= NLClient.new
 
-  $server.state = $server.state.merge(first_key: 'First Data')
-  $server.state = $server.state.merge(second_key: 'Second Data')
+  $server.state ||= $server.state.merge(first_key: 'First Data')
+  $server.state ||= $server.state.merge(second_key: 'Second Data')
   $server.state = $server.state.merge(time: args.state.tick_count.to_s)
 
   unless $first_response
