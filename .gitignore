@@ -1,0 +1,9 @@
+builds/
+logs/
+exceptions/
+sprites/circle/
+sprites/hexagon/
+sprites/isometric/
+sprites/misc/
+sprites/square/
+sprites/tile/
