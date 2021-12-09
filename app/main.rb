@@ -4,7 +4,7 @@ require 'app/net_lib.rb'
 require 'app/server.rb'
 require 'app/client.rb'
 
-def tick(args)  # rubocop:disable Lint/UnusedMethodArgument
+def tick(args)
   $port ||= 9001
 
   $server ||= NLServer.new(port: $port)
@@ -12,7 +12,7 @@ def tick(args)  # rubocop:disable Lint/UnusedMethodArgument
 
   $server.state = $server.state.merge(first_key: 'First Data')
   $server.state = $server.state.merge(second_key: 'Second Data')
-  $server.state = $server.state.merge(time: "#{args.state.tick_count}")
+  $server.state = $server.state.merge(time: args.state.tick_count.to_s)
 
   unless $first_response
     $client.initiate_download(url: "http://localhost:#{$port}/first_key") unless $client.download || $client.response
@@ -32,7 +32,7 @@ def tick(args)  # rubocop:disable Lint/UnusedMethodArgument
 
   $client.tick(args)
   $server.tick(args)
-  
+
   args.outputs.labels << [args.grid.center_x, args.grid.center_y, $first_response, 1]
   args.outputs.labels << [args.grid.center_x, args.grid.center_y - 20, $second_response, 1]
   args.outputs.labels << [args.grid.center_x, args.grid.center_y - 40, $time, 1]

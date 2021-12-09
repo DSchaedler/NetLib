@@ -2,6 +2,7 @@
 
 NL_S_PRE = '[NetLib][Server] '
 
+# Server Side Code
 class NLServer
   attr_accessor :state
 
@@ -15,9 +16,9 @@ class NLServer
   end
 
   def tick(args)
-    args.inputs.http_requests.each { |request|
+    args.inputs.http_requests.each do |request|
       requested_key = request.uri.gsub('/', '').to_sym
-      request.respond 200, "#{@state[requested_key]}", { 'X-DRGTK-header' => 'Powered by DragonRuby!' }
-    }
+      request.respond 200, @state[requested_key].to_s, { 'X-DRGTK-header' => 'Powered by DragonRuby!' }
+    end
   end
 end
