@@ -17,8 +17,12 @@ class NLServer
 
   def tick(args)
     args.inputs.http_requests.each do |request|
-      requested_key = request.uri.gsub('/', '').to_sym
-      request.respond 200, @state[requested_key].to_s, { 'X-DRGTK-header' => 'Powered by DragonRuby!' }
+      if request.uri == '/'
+        request.respond 200, @state.to_s, { 'X-DRGTK-header' => 'Powered by DragonRuby!' }
+      else
+        requested_key = request.uri.gsub('/', '').to_sym
+        request.respond 200, @state[requested_key].to_s, { 'X-DRGTK-header' => 'Powered by DragonRuby!' }
+      end
     end
   end
 end
