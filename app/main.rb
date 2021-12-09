@@ -4,41 +4,41 @@ require 'app/net_lib.rb'
 require 'app/server.rb'
 require 'app/client.rb'
 
-def tick(args)
-  $port ||= 9001
+def tick(args)  # rubocop:disable Lint/UnusedMethodArgument
+  args.state.port ||= 9001
 
-  $server ||= NLServer.new(port: $port)
-  $client ||= NLClient.new
+  args.state.server ||= NLServer.new(port: args.state.port)
+  args.state.client ||= NLClient.new
 
-  $server.state ||= $server.state.merge(first_key: 'First Data')
-  $server.state ||= $server.state.merge(second_key: 'Second Data')
-  $server.state = $server.state.merge(time: args.state.tick_count.to_s)
+  args.state.server.state = args.state.server.state.merge(first_key: 'First Data')
+  args.state.server.state = args.state.server.state.merge(second_key: 'Second Data')
+  args.state.server.state = args.state.server.state.merge(time: "#{args.state.tick_count}")
 
-  unless $first_response
-    $client.initiate_download(url: "http://localhost:#{$port}/first_key") unless $client.download || $client.response
-    $first_response ||= $client.response
-    $client.response = nil
+  unless args.state.first_response
+    args.state.client.initiate_download(url: "http://localhost:#{args.state.port}/first_key") unless args.state.client.download || args.state.client.response
+    args.state.first_response ||= args.state.client.response
+    args.state.client.response = nil
   end
 
-  unless $second_response
-    $client.initiate_download(url: "http://localhost:#{$port}/second_key") unless $client.download || $client.response
-    $second_response ||= $client.response
-    $client.response = nil
+  unless args.state.second_response
+    args.state.client.initiate_download(url: "http://localhost:#{args.state.port}/second_key") unless args.state.client.download || args.state.client.response
+    args.state.second_response ||= args.state.client.response
+    args.state.client.response = nil
   end
 
-  $client.initiate_download(url: "http://localhost:#{$port}/time") unless $client.download || $client.response
-  $time = $client.response
-  $client.response = nil
+  args.state.client.initiate_download(url: "http://localhost:#{args.state.port}/time") unless args.state.client.download || args.state.client.response
+  args.state.time = args.state.client.response
+  args.state.client.response = nil
 
-  $client.tick(args)
-  $server.tick(args)
-
-  args.outputs.labels << [args.grid.center_x, args.grid.center_y, $first_response, 1]
-  args.outputs.labels << [args.grid.center_x, args.grid.center_y - 20, $second_response, 1]
-  args.outputs.labels << [args.grid.center_x, args.grid.center_y - 40, $time, 1]
+  args.state.client.tick(args)
+  args.state.server.tick(args)
+  
+  args.outputs.labels << [args.grid.center_x, args.grid.center_y, args.state.first_response, 1]
+  args.outputs.labels << [args.grid.center_x, args.grid.center_y - 20, args.state.second_response, 1]
+  args.outputs.labels << [args.grid.center_x, args.grid.center_y - 40, args.state.time, 1]
 end
 
 def reset
-  $server = nil
-  $client = nil
+  $gtk.args.state.server = nil
+  $gtk.args.state.client = nil
 end
