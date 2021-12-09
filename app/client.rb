@@ -21,7 +21,7 @@ class NLClient
     if @download[:complete] && @download[:http_response_code].between?(200, 299)
       #$gtk.log_debug "#{NL_C_PRE}Download Complete."
       if @download[:response_data][0] == '{'
-        @state = @download[:response_data]
+        @state = eval @download[:response_data]
       else
         @response = @download[:response_data]
       end
